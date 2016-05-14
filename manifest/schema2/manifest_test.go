@@ -34,11 +34,13 @@ func TestManifest(t *testing.T) {
 			Size:      985,
 			MediaType: MediaTypeConfig,
 		},
-		Layers: []distribution.Descriptor{
+		Layers: []LayerDescriptor{
 			{
-				Digest:    "sha256:62d8908bee94c202b2d35224a221aaa2058318bfa9879fa541efaecba272331b",
-				Size:      153263,
-				MediaType: MediaTypeLayer,
+				Descriptor: distribution.Descriptor{
+					Digest:    "sha256:62d8908bee94c202b2d35224a221aaa2058318bfa9879fa541efaecba272331b",
+					Size:      153263,
+					MediaType: MediaTypeLayer,
+				},
 			},
 		},
 	}

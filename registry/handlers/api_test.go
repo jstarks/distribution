@@ -1199,16 +1199,20 @@ func testManifestAPISchema2(t *testing.T, env *testEnv, imageName reference.Name
 			Size:      3253,
 			MediaType: schema2.MediaTypeConfig,
 		},
-		Layers: []distribution.Descriptor{
+		Layers: []schema2.LayerDescriptor{
 			{
-				Digest:    "sha256:463434349086340864309863409683460843608348608934092322395278926a",
-				Size:      6323,
-				MediaType: schema2.MediaTypeLayer,
+				Descriptor: distribution.Descriptor{
+					Digest:    "sha256:463434349086340864309863409683460843608348608934092322395278926a",
+					Size:      6323,
+					MediaType: schema2.MediaTypeLayer,
+				},
 			},
 			{
-				Digest:    "sha256:630923423623623423352523525237238023652897356239852383652aaaaaaa",
-				Size:      6863,
-				MediaType: schema2.MediaTypeLayer,
+				Descriptor: distribution.Descriptor{
+					Digest:    "sha256:630923423623623423352523525237238023652897356239852383652aaaaaaa",
+					Size:      6863,
+					MediaType: schema2.MediaTypeLayer,
+				},
 			},
 		},
 	}
