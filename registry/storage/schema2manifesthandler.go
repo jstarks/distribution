@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"encoding/json"
+
 	"github.com/docker/distribution"
 	"github.com/docker/distribution/context"
 	"github.com/docker/distribution/digest"
@@ -80,6 +81,11 @@ func (ms *schema2ManifestHandler) verifyManifest(ctx context.Context, mnfst sche
 		}
 
 		for _, fsLayer := range mnfst.References() {
+			if fsLayer.MediaType == schema2.MediaTypeForeignLayer {
+				// This layer is probably not present since it should be downloaded
+				// from a remote URL.
+				continue
+			}
 			_, err := ms.repository.Blobs(ctx).Stat(ctx, fsLayer.Digest)
 			if err != nil {
 				if err != distribution.ErrBlobUnknown {
