@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 
 	"encoding/json"
@@ -80,13 +81,21 @@ func (ms *schema2ManifestHandler) verifyManifest(ctx context.Context, mnfst sche
 			errs = append(errs, distribution.ErrManifestBlobUnknown{Digest: target.Digest})
 		}
 
-		for _, fsLayer := range mnfst.References() {
-			if fsLayer.MediaType == schema2.MediaTypeForeignLayer {
-				// This layer is probably not present since it should be downloaded
-				// from a remote URL.
-				continue
+		for _, fsLayer := range mnfst.Layers {
+			var err error
+			if fsLayer.MediaType != schema2.MediaTypeForeignLayer {
+				if fsLayer.ForeignURL == "" {
+					_, err = ms.repository.Blobs(ctx).Stat(ctx, fsLayer.Digest)
+				} else {
+					err = errors.New("unexpected foreign URL on layer")
+				}
+			} else {
+				// Clients download this layer from an external URL, so do not check for
+				// its presense.
+				if fsLayer.ForeignURL == "" {
+					err = errors.New("missing foreign URL on layer")
+				}
 			}
-			_, err := ms.repository.Blobs(ctx).Stat(ctx, fsLayer.Digest)
 			if err != nil {
 				if err != distribution.ErrBlobUnknown {
 					errs = append(errs, err)
