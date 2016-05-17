@@ -3,6 +3,7 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"net/url"
 
 	"encoding/json"
 
@@ -92,8 +93,9 @@ func (ms *schema2ManifestHandler) verifyManifest(ctx context.Context, mnfst sche
 			} else {
 				// Clients download this layer from an external URL, so do not check for
 				// its presense.
-				if fsLayer.ForeignURL == "" {
-					err = errors.New("missing foreign URL on layer")
+				u, err := url.ParseRequestURI(fsLayer.ForeignURL)
+				if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+					err = errors.New("invalid foreign URL on layer")
 				}
 			}
 			if err != nil {
